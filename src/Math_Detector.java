@@ -16,79 +16,79 @@ public class Math_Detector implements PlugInFilter
     	ImageProcessor copy = original.duplicate();
     	int w = original.getWidth();
         int h = original.getHeight();
-        int noo = 0;		//Number of objects detected
-        int count = 0;		//counts numbers of runs during pixel detection algorithm
-        int elements=0;		//counts the number of found pixel for every object
-        int storepos=0; 	//
-        int x=0, xx=0, y=0, yy=0;
-        int[] storex = new int[w];
-        int[] storey = new int[h];
         
+        //Arrays
+        int[] storex = new int [100000];
+        int[] storey = new int [100000];
+        int storepos = 0;
+        
+        //Variablen
+        int x = 0, y = 0, xx = 0, yy = 0, objekte = 0;
+        int schwarz = 0, weis = 255;  //Farben definieren
+        
+        //Nullsetzen der Arrays
         for(int initx=0; initx<w; initx++)
         {
         	storex[initx]=0;
         }
         for(int inity=0; inity<h; inity++)
         {
-        	storex[inity]=0;
+        	storey[inity]=0;
         }
+        storepos = 0;
         
 		for (y = 0; y < h; y++)
 		{			
 			for (x = 0; x < w; x++)
 			{
-				if (original.getPixel(x, y) == 0)
+				if (copy.getPixel(x, y)==schwarz)
 				{
-					xx=x;
-					yy=y;
-					noo++;
-					elements++;
-					original.putPixel(x, y, 255);
-					System.out.printf("Objekt #%d: Position:(%d|%d)   ", noo,x,y);
-					
-					do{	
-						for (int findx=x-1; findx<=x+1; findx++)
-						{
-							for (int findy=y-1; findy<=y+1; findy++)
-							{
-								count++;
-								if (original.getPixel(findx, findy) == 0)
-								{
-									storepos++;
-									storex[storepos]=findx;
-									storey[storepos]=findy;
-									
-									elements++;
-									original.putPixel(findx, findy, 255);								
-									
-									//x=findx;
-									//y=findy;
-								}
-								if (count==9 && storepos>0)
-								{
-									count=0;
-									x=storex[storepos];
-									y=storey[storepos];
-									storepos=0;
-								}
-							}
-						}
-					}while(count<=8);
-					
+					objekte++;
+					copy.putPixel(x, y, weis);
+					xx = x;
+					yy = y;
+					search(copy, xx, yy, schwarz, weis, storepos, storex, storey );
+					while (storepos > 0);
+					{
+						xx = storex[storepos];
+						yy = storey[storepos];
+						storepos--;
+						search(copy, xx, yy, schwarz, weis, storepos, storex, storey );
+					}
+			    	System.out.printf("OBJEKT GEFUNDEN! %d =Storepos\n", storepos);
+
 				}
-				
-				
-				if(elements>0)
-				{
-					x=xx;
-					y=yy;
-					System.out.printf("%d Pixel\n", elements);
-				}
-			elements=0;
-			
 			}
 		}
-		System.out.printf("\nGefundene Objekte: %d\n\n\n", noo);
+    	System.out.printf("Ende des Programms. Letzes Pixel erreicht\n");
+    	System.out.printf("Es wurden %d Objekte gefunden\n", objekte);
+
+
+    }
+    
+    //UP
+    public void search (ImageProcessor copy, int xx, int yy, int schwarz, int weis, int storepos, int storex[], int storey[] )
+    {
+		for (int findy = yy-1; findy <= yy+1; findy++ )
+		{
+			for (int findx = xx-1; findx <= xx+1; findx++ )
+			{
+				if (copy.getPixel(findx, findy)==schwarz)
+				{
+					//speichern
+					storepos++;
+					storex[storepos] = findx;
+					storey[storepos] = findy;
+					//weis setzen
+					copy.putPixel(findx, findy, weis);
+				}
+			}
+		}
+    	
+    	
+    	System.out.printf("%d =Storepos\n", storepos);
+    	//test
+		
     }
 }	//END
 
