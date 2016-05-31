@@ -18,13 +18,13 @@ public class Math_Detector implements PlugInFilter
         int h = original.getHeight();
         
         //Arrays
-        int[] storex = new int [100000];
-        int[] storey = new int [100000];
-        int storepos = 0;
+        int[] storex = new int [10000];
+        int[] storey = new int [10000];
+        int storepos = 1;
         
         //Variablen
         int x = 0, y = 0, xx = 0, yy = 0, objekte = 0;
-        int schwarz = 0, weis = 255;  //Farben definieren
+        int schwarz = 0, weis = 255, grau = 70;  //Farben definieren
         
         //Nullsetzen der Arrays
         for(int initx=0; initx<w; initx++)
@@ -35,28 +35,25 @@ public class Math_Detector implements PlugInFilter
         {
         	storey[inity]=0;
         }
-        storepos = 0;
         
 		for (y = 0; y < h; y++)
 		{			
 			for (x = 0; x < w; x++)
 			{
-				if (copy.getPixel(x, y)==schwarz)
+				if (original.getPixel(x, y)==schwarz)
 				{
 					objekte++;
-					copy.putPixel(x, y, weis);
+					System.out.printf("#%d Pos:(%d|%d)\n", objekte, x, y);
+					original.putPixel(x, y, grau);
 					xx = x;
 					yy = y;
-					search(copy, xx, yy, schwarz, weis, storepos, storex, storey );
-					while (storepos > 0);
+					search(original, xx, yy, schwarz, weis, grau, storepos, storex, storey );
+					/*while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
 					{
 						xx = storex[storepos];
 						yy = storey[storepos];
 						storepos--;
-						search(copy, xx, yy, schwarz, weis, storepos, storex, storey );
-					}
-			    	System.out.printf("OBJEKT GEFUNDEN! %d =Storepos\n", storepos);
-
+					}*/
 				}
 			}
 		}
@@ -64,31 +61,33 @@ public class Math_Detector implements PlugInFilter
     	System.out.printf("Es wurden %d Objekte gefunden\n", objekte);
 
 
-    }
+    }//END
     
     //UP
-    public void search (ImageProcessor copy, int xx, int yy, int schwarz, int weis, int storepos, int storex[], int storey[] )
+    public void search (ImageProcessor original, int xx, int yy, int schwarz, int weis, int grau, int storepos, int storex[], int storey[] )
     {
 		for (int findy = yy-1; findy <= yy+1; findy++ )
 		{
 			for (int findx = xx-1; findx <= xx+1; findx++ )
 			{
-				if (copy.getPixel(findx, findy)==schwarz)
+				if (original.getPixel(findx, findy)==schwarz)
 				{
 					//speichern
 					storepos++;
 					storex[storepos] = findx;
 					storey[storepos] = findy;
 					//weis setzen
-					copy.putPixel(findx, findy, weis);
+					original.putPixel(findx, findy, grau);
+					while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
+					{
+						xx = storex[storepos];
+						yy = storey[storepos];
+						storepos--;
+						search(original, xx, yy, schwarz, weis, grau, storepos, storex, storey );
+					}
 				}
 			}
-		}
-    	
-    	
-    	System.out.printf("%d =Storepos\n", storepos);
-    	//test
-		
+		}		
     }
 }	//END
 
