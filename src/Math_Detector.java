@@ -20,10 +20,10 @@ public class Math_Detector implements PlugInFilter
         //Arrays
         int[] storex = new int [10000];
         int[] storey = new int [10000];
-        int storepos = 1;
+        int storepos = 0;
         
         //Variablen
-        int x = 0, y = 0, xx = 0, yy = 0, objekte = 0;
+        int x = 0, y = 0, objekte = 0;
         int schwarz = 0, weis = 255, grau = 70;  //Farben definieren
         
         //Nullsetzen der Arrays
@@ -45,9 +45,7 @@ public class Math_Detector implements PlugInFilter
 					objekte++;
 					System.out.printf("#%d Pos:(%d|%d)\n", objekte, x, y);
 					original.putPixel(x, y, grau);
-					xx = x;
-					yy = y;
-					search(original, xx, yy, schwarz, weis, grau, storepos, storex, storey );
+					search(original, x, y, schwarz, weis, grau, storepos, storex, storey );
 					/*while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
 					{
 						xx = storex[storepos];
@@ -64,12 +62,13 @@ public class Math_Detector implements PlugInFilter
     }//END
     
     //UP
-    public void search (ImageProcessor original, int xx, int yy, int schwarz, int weis, int grau, int storepos, int storex[], int storey[] )
+    public void search (ImageProcessor original, int x, int y, int schwarz, int weis, int grau, int storepos, int storex[], int storey[] )
     {
-		for (int findy = yy-1; findy <= yy+1; findy++ )
+		for (int findy = y-1; findy <= y+1; findy++)
 		{
-			for (int findx = xx-1; findx <= xx+1; findx++ )
+			for (int findx = x-1; findx <= x+1; findx++)
 			{
+				System.out.printf("Hochzählen 9x\n");
 				if (original.getPixel(findx, findy)==schwarz)
 				{
 					//speichern
@@ -78,16 +77,18 @@ public class Math_Detector implements PlugInFilter
 					storey[storepos] = findy;
 					//weis setzen
 					original.putPixel(findx, findy, grau);
-					while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
-					{
-						xx = storex[storepos];
-						yy = storey[storepos];
-						storepos--;
-						search(original, xx, yy, schwarz, weis, grau, storepos, storex, storey );
-					}
+					System.out.printf("Speichern\n");
 				}
 			}
-		}		
+		}
+		while (storepos != 0); //<--Wie können für storepos negative Werte vorkommen???
+		{
+			System.out.printf("Zurücksetzen\n");
+			x = storex[storepos];
+			y = storey[storepos];
+			storepos--;
+			search(original, x, y, schwarz, weis, grau, storepos, storex, storey );	
+		}
     }
 }	//END
 
