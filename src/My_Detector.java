@@ -22,7 +22,7 @@ public class My_Detector implements PlugInFilter
         int storepos=0; 	//
         int x=0, xx=0, y=0, yy=0;
         int[] storex = new int[w];
-        int[] storey = new int[h];		//Test comment
+        int[] storey = new int[h];
         
         for(int initx=0; initx<w; initx++)
         {
