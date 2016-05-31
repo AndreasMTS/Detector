@@ -4,7 +4,7 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 
 
-public class My_Detector implements PlugInFilter 
+public class Math_Detector implements PlugInFilter 
 {
     public int setup(String arg, ImagePlus imp) 
     {
