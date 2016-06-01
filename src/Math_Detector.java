@@ -45,9 +45,8 @@ public class Math_Detector implements PlugInFilter
 					objekte++;
 					System.out.printf("Position des ersten gefundenen Pixels des %d. Objekts: (%d|%d)\n", objekte, x, y);
 					original.putPixel(x, y, grau);
-					int xx = x;
-					int yy = y;
-					search(original, xx, yy, schwarz, grau, storepos, storex, storey );
+					
+					search(original, x, y, schwarz, grau, storepos, storex, storey );
 					/*while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
 					{
 						xx = storex[storepos];
@@ -64,12 +63,12 @@ public class Math_Detector implements PlugInFilter
     }//END
     
     //UP
-    public void search (ImageProcessor original, int xx, int yy, int schwarz, int grau, int storepos, int storex[], int storey[] )
+    public void search (ImageProcessor original, int x, int y, int schwarz, int grau, int storepos, int storex[], int storey[] )
     {
-    	System.out.printf("Hochzählen 9x\n");
-    	for (int findy = yy-1; findy <= yy+1; findy++)
+    	System.out.printf("UP Start \nHochzählen 9x\n");
+    	for (int findy = y-1; findy <= y+1; findy++)
 		{
-			for (int findx = xx-1; findx <= xx+1; findx++)
+			for (int findx = x-1; findx <= x+1; findx++)
 			{
 				if (original.getPixel(findx, findy)==schwarz)
 				{
@@ -83,14 +82,15 @@ public class Math_Detector implements PlugInFilter
 				}
 			}
 		}
-		while (storepos != 0); //<--Wie können für storepos negative Werte vorkommen???
+		while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
 		{
-			xx = storex[storepos];
-			yy = storey[storepos];
+			x = storex[storepos];
+			y = storey[storepos];
 			storepos--;
 			System.out.printf("Pixel wurde abgearbeitet. Neue Arrayposition ist %d\n" ,storepos);
-			search(original, xx, yy, schwarz, grau, storepos, storex, storey );	
+			search(original, x, y, schwarz, grau, storepos, storex, storey );	
 		}
+		System.out.printf("UP Ende\n");
     }
 }	//END
 
