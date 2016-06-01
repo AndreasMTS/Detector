@@ -90,7 +90,7 @@ public class Math_Detector implements PlugInFilter
 			System.out.printf("Pixel wurde abgearbeitet. Neue Arrayposition ist %d\n" ,storepos);
 			search(original, x, y, schwarz, grau, storepos, storex, storey );	
 		}
-		System.out.printf("UP Ende\n");
+		System.out.printf("UP-Ende\n");
     }
 }	//END
 
