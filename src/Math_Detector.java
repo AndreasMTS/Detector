@@ -18,13 +18,14 @@ public class Math_Detector implements PlugInFilter
         int h = original.getHeight();
         
         //Arrays
-        int[] storex = new int [10000];
-        int[] storey = new int [10000];
+        int arraysize = w*h;
+        int[] storex = new int [arraysize];
+        int[] storey = new int [arraysize];
         int storepos = 0;
         
         //Variablen
         int x = 0, y = 0, objekte = 0;
-        int schwarz = 0, grau = 70;  //Farben definieren
+        int grau = 145, threshold = 140;  //Farben definieren, threshold ist alles kleiner als 140
         
         //Nullsetzen der Arrays
         for(int initx=0; initx<w; initx++)
@@ -42,12 +43,18 @@ public class Math_Detector implements PlugInFilter
 		{			
 			for (x = 0; x < w; x++)
 			{
-				if (original.getPixel(x, y)==schwarz)
+				if (original.getPixel(x, y) <= threshold)
 				{
 					objekte++;				//Objekt gefunden
 					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
 					
-					search(original, x, y, schwarz, grau, storepos, storex, storey );
+					int xx = x;
+					int yy = y;
+					search(original, xx, yy, threshold, grau, storepos, storex, storey );
+				}
+				else
+				{
+					storepos = 0;
 				}
 			}
 		}
@@ -57,13 +64,13 @@ public class Math_Detector implements PlugInFilter
     }//END
     
     //UP
-    public void search (ImageProcessor original, int x, int y, int schwarz, int grau, int storepos, int storex[], int storey[] )
+    public void search (ImageProcessor original, int xx, int yy, int threshold, int grau, int storepos, int storex[], int storey[] )
     {
-    	for (int findy = y-1; findy <= y+1; findy++)
+    	for (int findy = yy-1; findy <= yy+1; findy++)
 		{
-			for (int findx = x-1; findx <= x+1; findx++)
+			for (int findx = xx-1; findx <= xx+1; findx++)
 			{
-				if (original.getPixel(findx, findy)==schwarz)
+				if (original.getPixel(findx, findy) <= threshold)
 				{
 					//speichern
 					storepos++;
@@ -76,11 +83,10 @@ public class Math_Detector implements PlugInFilter
 		}
 		while (storepos > 0) //<--Wie können für storepos negative Werte vorkommen???
 		{
-			x = storex[storepos];
-			y = storey[storepos];
+			xx = storex[storepos];
+			yy = storey[storepos];
 			storepos--;
-			System.out.printf("Neue Arrayposition ist %d\n" ,storepos);
-			search(original, x, y, schwarz, grau, storepos, storex, storey );	
+			search(original, xx, yy, threshold, grau, storepos, storex, storey );
 		}
     }
 }	//END
