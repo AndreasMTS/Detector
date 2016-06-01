@@ -1,4 +1,5 @@
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
@@ -27,16 +28,32 @@ public class Math_Detector implements PlugInFilter
         
         //Variablen definieren
         int x = 0, y = 0, objekte = 0;
-        //int summe = 0;
-        int grau = 145, threshold = 140;  //Farben definieren, threshold ist alles kleiner als 140
+        float summe = 0, durchschnitt = 0;
+        int grau = 145, weis = 255;  //Farben definieren
         
-    	
+        //Benutzereingaben
+   		int threshold = 140;		//optional  ca kleiner als 140
+   		threshold = (int) IJ.getNumber("Ungerade Zahl eingeben", threshold);
+        
+        //Alle Randpixel weis setzen
+        for (y = 0; y <= h; y++)
+		{			
+			for (x = 0; x <= w; x++)
+			{
+				if (x <= 0 || x >= w-1 || y <= 0 || y >= h-1)		//Macht einen Rahmen, Breite = 1 Pixel
+				{
+					original.putPixel(x, y, weis);
+				}
+			}
+		}
+        
+        
         //Jeden Bildpunkt absuchen
 		for (y = 0; y <= h; y++)
 		{			
 			for (x = 0; x <= w; x++)
 			{
-				if (x <= 0 || x >= w-1 || y <= 0 || y >= h-1)		//Macht einen Rahmen, Breite = 1/20 der Bildbreite
+				if (x <= 0 || x >= w-1 || y <= 0 || y >= h-1)		//Macht einen Rahmen, Breite = 1 Pixel
 				{
 					original.putPixel(x, y, 255);
 				}
@@ -45,11 +62,12 @@ public class Math_Detector implements PlugInFilter
 					objekte++;				//Objekt gefunden
 					
 					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
-					pixel = 1;
 					int xx = x;
 					int yy = y;
+					pixel = 0;
 					pixel += search(original, xx, yy, threshold, grau, storepos, storex, storey );
-					
+					pixel++;
+					summe = summe + pixel;		//Alle gefundenen Pixel zusammenzaehlen
 					System.out.printf("Es wurden %d Pixel im Objekt gefunden\n", pixel);		//Ausgabe
 				}
 				else
@@ -58,10 +76,13 @@ public class Math_Detector implements PlugInFilter
 				}
 			}
 		}
-    	System.out.printf("Es wurden %d Objekte gefunden\n", objekte);		//Ausgabe
+		durchschnitt = summe / objekte;		//Durchschnitt berechnen
+				
+    	System.out.printf("\nEs wurden %d Objekte gefunden\n", objekte);		//Ausgabe
+    	System.out.printf("Jedes Objekt hat durchschnittlich %.3f Pixel\n\n", durchschnitt);		//Ausgabe
 
 
-    }//END
+    }	//HP END
     
     
     public int search (ImageProcessor original, int xx, int yy, int threshold, int grau, int storepos, int storex[], int storey[])
