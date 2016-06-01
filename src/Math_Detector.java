@@ -87,7 +87,7 @@ public class Math_Detector implements PlugInFilter
 			x = storex[storepos];
 			y = storey[storepos];
 			storepos--;
-			System.out.printf("Pixel wurde abgearbeitet. Neue Arrayposition ist %d\n" ,storepos);
+			System.out.printf("Pixel wurde abgearbeitet.Neue Arrayposition ist %d\n" ,storepos);
 			search(original, x, y, schwarz, grau, storepos, storex, storey );	
 		}
 		System.out.printf("UP Ende\n");
