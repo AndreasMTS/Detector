@@ -25,7 +25,7 @@ public class Math_Detector implements PlugInFilter
         
         //Variablen
         int x = 0, y = 0, objekte = 0;
-        int grau = 145, threshold = 140;  //Farben definieren, threshold ist alles kleiner als 140
+        int grau = 145, threshold = 140;  //Farben definieren,threshold ist alles kleiner als 140
         
         //Nullsetzen der Arrays
         for(int initx=0; initx<w; initx++)
