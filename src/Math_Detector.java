@@ -6,14 +6,16 @@ import ij.process.ImageProcessor;
 
 public class Math_Detector implements PlugInFilter 
 {
-    public int setup(String arg, ImagePlus imp) 
+	public static int pixel;
+	
+	public int setup(String arg, ImagePlus imp) 
     {
     	return DOES_8G;
     }
         
     public void run(ImageProcessor original) 
     {
-    	ImageProcessor copy = original.duplicate();
+    	//ImageProcessor copy = original.duplicate();
     	int w = original.getWidth();
         int h = original.getHeight();
         
@@ -23,38 +25,36 @@ public class Math_Detector implements PlugInFilter
         int[] storey = new int [arraysize];
         int storepos = 0;
         
-        //Variablen
+        //Variablen definieren
         int x = 0, y = 0, objekte = 0;
+        //int summe = 0;
         int grau = 145, threshold = 140;  //Farben definieren, threshold ist alles kleiner als 140
         
-        //Nullsetzen der Arrays
-        for(int initx=0; initx<w; initx++)
-        {
-        	storex[initx]=0;
-        }
-        for(int inity=0; inity<h; inity++)
-        {
-        	storey[inity]=0;
-        }
-        
-        
+    	
         //Jeden Bildpunkt absuchen
-		for (y = 0; y < h; y++)
+		for (y = 0; y <= h; y++)
 		{			
-			for (x = 0; x < w; x++)
+			for (x = 0; x <= w; x++)
 			{
-				if (original.getPixel(x, y) <= threshold)
+				if (x <= 0 || x >= w-1 || y <= 0 || y >= h-1)		//Macht einen Rahmen, Breite = 1/20 der Bildbreite
+				{
+					original.putPixel(x, y, 255);
+				}
+				else if (original.getPixel(x, y) <= threshold)
 				{
 					objekte++;				//Objekt gefunden
-					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
 					
+					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
+					pixel = 1;
 					int xx = x;
 					int yy = y;
-					search(original, xx, yy, threshold, grau, storepos, storex, storey );
+					pixel += search(original, xx, yy, threshold, grau, storepos, storex, storey );
+					
+					System.out.printf("Es wurden %d Pixel im Objekt gefunden\n", pixel);		//Ausgabe
 				}
 				else
 				{
-					storepos = 0;
+					storepos = 0;		//Sicherheitshalber wieder auf Null setzen
 				}
 			}
 		}
@@ -63,15 +63,17 @@ public class Math_Detector implements PlugInFilter
 
     }//END
     
-    //UP
-    public void search (ImageProcessor original, int xx, int yy, int threshold, int grau, int storepos, int storex[], int storey[] )
+    
+    public int search (ImageProcessor original, int xx, int yy, int threshold, int grau, int storepos, int storex[], int storey[])
     {
-    	for (int findy = yy-1; findy <= yy+1; findy++)
+    	for (int findy = yy-1; findy <= yy+1; findy++)					// 3x3 absuchen
 		{
 			for (int findx = xx-1; findx <= xx+1; findx++)
 			{
-				if (original.getPixel(findx, findy) <= threshold)
+				if (original.getPixel(findx, findy) <= threshold)		//alle dunklen Pixel speichern
 				{
+					//pixel zaehlen
+					pixel++;
 					//speichern
 					storepos++;
 					storex[storepos] = findx;
@@ -81,13 +83,15 @@ public class Math_Detector implements PlugInFilter
 				}
 			}
 		}
-		while (storepos > 0) //<--Wie können für storepos negative Werte vorkommen???
+		while (storepos > 0)				//alle gefundenen Punkte grau setzten und neu suchen
 		{
 			xx = storex[storepos];
 			yy = storey[storepos];
 			storepos--;
 			search(original, xx, yy, threshold, grau, storepos, storex, storey );
 		}
+		
+	return pixel;	
     }
 }	//END
 
@@ -101,7 +105,20 @@ public class Math_Detector implements PlugInFilter
 //UEBUNGEN:
 /*
 
-
+	//Nullsetzen der Arrays
+        for(int initx=0; initx<w; initx++)
+        {
+        	storex[initx]=0;
+        }
+        for(int inity=0; inity<h; inity++)
+        {
+        	storey[inity]=0;
+        }
+        
+        
+	
+	
+	
 	//Filterprogramm mit einstellbaren Filter
 
     public void run(ImageProcessor original) 
