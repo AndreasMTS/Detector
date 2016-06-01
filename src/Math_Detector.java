@@ -36,28 +36,22 @@ public class Math_Detector implements PlugInFilter
         	storey[inity]=0;
         }
         
+        
+        //Jeden Bildpunkt absuchen
 		for (y = 0; y < h; y++)
 		{			
 			for (x = 0; x < w; x++)
 			{
 				if (original.getPixel(x, y)==schwarz)
 				{
-					objekte++;
-					System.out.printf("Position des ersten gefundenen Pixels des %d. Objekts: (%d|%d)\n", objekte, x, y);
-					original.putPixel(x, y, grau);
+					objekte++;				//Objekt gefunden
+					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
 					
 					search(original, x, y, schwarz, grau, storepos, storex, storey );
-					/*while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
-					{
-						xx = storex[storepos];
-						yy = storey[storepos];
-						storepos--;
-					}*/
 				}
 			}
 		}
-    	System.out.printf("Ende des U-Programms. Letzes Pixel erreicht\n");
-    	System.out.printf("Es wurden %d Objekte gefunden\n", objekte);
+    	System.out.printf("Es wurden %d Objekte gefunden\n", objekte);		//Ausgabe
 
 
     }//END
@@ -65,7 +59,6 @@ public class Math_Detector implements PlugInFilter
     //UP
     public void search (ImageProcessor original, int x, int y, int schwarz, int grau, int storepos, int storex[], int storey[] )
     {
-    	System.out.printf("UP Start \nHochzählen 9x\n");
     	for (int findy = y-1; findy <= y+1; findy++)
 		{
 			for (int findx = x-1; findx <= x+1; findx++)
@@ -78,7 +71,6 @@ public class Math_Detector implements PlugInFilter
 					storey[storepos] = findy;
 					
 					original.putPixel(findx, findy, grau);		//grau setzen
-					System.out.printf("Neuer Pixel auf %d. Position im Array gespeichert!\n" ,storepos);
 				}
 			}
 		}
@@ -87,10 +79,9 @@ public class Math_Detector implements PlugInFilter
 			x = storex[storepos];
 			y = storey[storepos];
 			storepos--;
-			System.out.printf("Pixel wurde abgearbeitet.Neue Arrayposition ist %d\n" ,storepos);
+			System.out.printf("Neue Arrayposition ist %d\n" ,storepos);
 			search(original, x, y, schwarz, grau, storepos, storex, storey );	
 		}
-		System.out.printf("UP Ende\n");
     }
 }	//END
 
