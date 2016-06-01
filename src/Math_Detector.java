@@ -64,10 +64,9 @@ public class Math_Detector implements PlugInFilter
 					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
 					int xx = x;
 					int yy = y;
-					pixel = 0;
-					pixel += search(original, xx, yy, threshold, grau, storepos, storex, storey );
+					pixel = search(original, xx, yy, threshold, grau, storepos, storex, storey );
 					pixel++;
-					summe = summe + pixel;		//Alle gefundenen Pixel zusammenzaehlen
+					summe += pixel;		//Alle gefundenen Pixel zusammenzaehlen
 					System.out.printf("Es wurden %d Pixel im Objekt gefunden\n", pixel);		//Ausgabe
 				}
 				else
