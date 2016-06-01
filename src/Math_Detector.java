@@ -82,7 +82,7 @@ public class Math_Detector implements PlugInFilter
 				}
 			}
 		}
-		while (storepos > 0); //<--Wie können für storepos negative Werte vorkommen???
+		while (storepos > 0) //<--Wie können für storepos negative Werte vorkommen???
 		{
 			x = storex[storepos];
 			y = storey[storepos];
