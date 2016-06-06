@@ -33,7 +33,7 @@ public class Math_Detector implements PlugInFilter
         
         //Benutzereingaben
    		int threshold = 140;		//optional  ca kleiner als 140
-   		threshold = (int) IJ.getNumber("Ungerade Zahl eingeben", threshold);
+   		threshold = (int) IJ.getNumber("Input threshold:", threshold);
         
         //Alle Randpixel weis setzen
         for (y = 0; y <= h; y++)
@@ -64,6 +64,7 @@ public class Math_Detector implements PlugInFilter
 					original.putPixel(x, y, grau);		//Erkannte Objekte werden grau gesetzt
 					int xx = x;
 					int yy = y;
+					pixel = 0;
 					pixel = search(original, xx, yy, threshold, grau, storepos, storex, storey );
 					pixel++;
 					summe += pixel;		//Alle gefundenen Pixel zusammenzaehlen
